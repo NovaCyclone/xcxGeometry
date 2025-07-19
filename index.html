@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>calculator</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.10.1/math.js"></script>
+    <style>
+        body { font-family: Arial; text-align: center; margin-top: 50px; }
+        input { padding: 10px; font-size: 16px; }
+        button { padding: 10px 20px; background: #007bff; color: white; border: none; cursor: pointer; }
+        #result { margin-top: 20px; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <h1>分式/根式精确计算器</h1>
+    <input type="text" id="input" placeholder="输入表达式，如 1/2 + sqrt(9)" size="30">
+    <button onclick="calculate()">计算</button>
+    <div id="result"></div>
+    <script>
+        function calculate() {
+            const input = document.getElementById("input").value;
+            try {
+                const result = math.evaluate(input);
+                if (math.typeOf(result) === "Fraction") {
+                    document.getElementById("result").innerHTML = `精确结果：${result.n}/${result.d}`;
+                } else if (input.includes("sqrt")) {
+                    document.getElementById("result").innerHTML = `精确结果：${input} = ${result}`;
+                } else {
+                    document.getElementById("result").innerHTML = `结果：${result}`;
+                }
+            } catch (error) {
+                document.getElementById("result").innerHTML = "错误：请输入合法表达式！";
+            }
+        }
+    </script>
+</body>
+</html>
