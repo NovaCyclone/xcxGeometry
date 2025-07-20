@@ -1,43 +1,160 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>精确数学计算器</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.7.0/math.js"></script>
+  <title>单项式计算器</title>
   <style>
-    body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; }
-    #input { width: 100%; padding: 10px; font-size: 16px; }
-    #result { margin-top: 20px; padding: 15px; background: #f5f5f5; }
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+    #calculator { background: #f5f5f5; padding: 20px; border-radius: 8px; }
+    input[type="text"] { width: 300px; padding: 8px; }
+    button { padding: 8px 16px; background: #4CAF50; color: white; border: none; cursor: pointer; }
+    #result { margin-top: 20px; padding: 10px; background: white; border: 1px solid #ddd; }
   </style>
 </head>
 <body>
-  <h1>精确数学计算器</h1>
-  <input type="text" id="input" placeholder="输入数学表达式，如 (1/3 + sqrt(8))/2">
-  <button onclick="calculate()">计算</button>
-  <div id="result"></div>
-  
+  <h1>精确单项式计算器</h1>
+  <div id="calculator">
+    <input type="text" id="monomial-input" placeholder="输入单项式，如 p(d(3,5),d(2,1))">
+    <button onclick="simplify()">化简</button>
+    <div id="result"></div>
+  </div>
+
   <script>
-    math.config({
-      number: 'Fraction',
-      precision: 64
-    });
-    
-    function calculate() {
-      try {
-        const input = document.getElementById('input').value;
-        const expr = math.parse(input);
-        const simplified = math.simplify(expr);
-        const result = simplified.toString();
-        
-        document.getElementById('result').innerHTML = `
-          <p><strong>输入:</strong> ${input}</p>
-          <p><strong>结果:</strong> ${result}</p>
-          <p><strong>数值近似:</strong> ${math.evaluate(input)}</p>
-        `;
-      } catch (e) {
-        document.getElementById('result').innerHTML = `
-          <p style="color: red;">错误: ${e.message}</p>
-        `;
+    class Fraction {
+      constructor(numerator, denominator) {
+        this.numerator = numerator;
+        this.denominator = denominator;
+        this.simplify();
       }
+      
+      simplify() {
+        const gcd = this.gcd(this.numerator, this.denominator);
+        this.numerator /= gcd;
+        this.denominator /= gcd;
+        if (this.denominator < 0) {
+          this.numerator *= -1;
+          this.denominator *= -1;
+        }
+      }
+      
+      gcd(a, b) {
+        return b === 0 ? a : this.gcd(b, a % b);
+      }
+    }
+
+    class Monomial {
+      constructor(expression) {
+        this.expression = expression.trim();
+      }
+      
+      simplify() {
+        try {
+          return this.simplifyExpression(this.expression);
+        } catch (e) {
+          return `错误: ${e.message}`;
+        }
+      }
+      
+      simplifyExpression(expr) {
+        if (this.isNumber(expr)) {
+          return `d(${expr},1)`;
+        }
+        
+        if (expr.startsWith("d(") && expr.endsWith(")")) {
+          const content = expr.substring(2, expr.length-1);
+          const parts = this.splitArguments(content);
+          if (parts.length === 2) {
+            const a = this.simplifyExpression(parts[0].trim());
+            const b = this.simplifyExpression(parts[1].trim());
+            const aFrac = this.parseFraction(a);
+            const bFrac = this.parseFraction(b);
+            const result = this.divideFractions(aFrac, bFrac);
+            return `d(${result.numerator},${result.denominator})`;
+          }
+        }
+        
+        if (expr.startsWith("p(") && expr.endsWith(")")) {
+          const content = expr.substring(2, expr.length-1);
+          const parts = this.splitArguments(content);
+          if (parts.length === 2) {
+            const a = this.simplifyExpression(parts[0].trim());
+            const b = this.simplifyExpression(parts[1].trim());
+            const aFrac = this.parseFraction(a);
+            const bFrac = this.parseFraction(b);
+            if (bFrac.denominator === 1) {
+              const power = bFrac.numerator;
+              const result = this.powerFraction(aFrac, power);
+              return `d(${result.numerator},${result.denominator})`;
+            } else {
+              return `p(${a},${b})`;
+            }
+          }
+        }
+        
+        throw new Error(`无效表达式: ${expr}`);
+      }
+      
+      splitArguments(content) {
+        const parts = [];
+        let depth = 0;
+        let start = 0;
+        
+        for (let i = 0; i < content.length; i++) {
+          const c = content[i];
+          if (c === '(') depth++;
+          if (c === ')') depth--;
+          if (c === ',' && depth === 0) {
+            parts.push(content.substring(start, i));
+            start = i + 1;
+          }
+        }
+        parts.push(content.substring(start));
+        
+        return parts;
+      }
+      
+      parseFraction(expr) {
+        if (this.isNumber(expr)) {
+          return new Fraction(parseInt(expr), 1);
+        }
+        
+        const match = expr.match(/d\((\d+),(\d+)\)/);
+        if (match) {
+          return new Fraction(parseInt(match[1]), parseInt(match[2]));
+        }
+        
+        throw new Error(`无法解析分数: ${expr}`);
+      }
+      
+      divideFractions(a, b) {
+        return new Fraction(
+          a.numerator * b.denominator,
+          a.denominator * b.numerator
+        );
+      }
+      
+      powerFraction(f, power) {
+        if (power >= 0) {
+          return new Fraction(
+            Math.pow(f.numerator, power),
+            Math.pow(f.denominator, power)
+          );
+        } else {
+          return new Fraction(
+            Math.pow(f.denominator, -power),
+            Math.pow(f.numerator, -power)
+          );
+        }
+      }
+      
+      isNumber(s) {
+        return /^-?\d+$/.test(s);
+      }
+    }
+
+    function simplify() {
+      const input = document.getElementById('monomial-input').value;
+      const monomial = new Monomial(input);
+      document.getElementById('result').textContent = monomial.simplify();
     }
   </script>
 </body>
