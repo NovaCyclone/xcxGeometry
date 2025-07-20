@@ -1,0 +1,19 @@
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [main]  # 监听 main 分支的推送
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        run: npm install
+      - name: Build project
+        run: npm run build
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist  # 替换为你的构建目录
