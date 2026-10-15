@@ -1,1285 +1,482 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-  <title>几何计算器</title>
-  <style>
-    body { font-family: Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 20px; }
-    #calculator { background: #f5f5f5; padding: 20px; border-radius: 8px; }
-    button { padding: 8px 12px; margin: 2px; background: #4CAF50; color: white; border: none; cursor: pointer; border-radius: 4px; }
-    button:hover { background: #45a049; }
-    #result { margin-top: 20px; padding: 10px; background: white; border: 1px solid #ddd; min-height: 50px; font-size: 22px; }
-    /* 键盘整体布局 */
-    .keypad {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 8px;
-      margin-top: 15px;
-      max-width: 520px;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Toolbox for xcx</title>
+
+<style>
+    
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #f5f7fb;
+    --card: #ffffff;
+    --text: #202b3c;
+    --sub: #788397;
+    --primary: #5278d9;
+    --border: #e8edf5;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+}
+
+/* 顶部导航 */
+
+header {
+    height: 68px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 8%;
+}
+
+.logo {
+    font-size: 21px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 1px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #667085;
+    margin-left: 28px;
+    font-size: 14px;
+}
+
+nav a:hover {
+    color: var(--primary);
+}
+
+/* 主体 */
+
+.container {
+    max-width: 1120px;
+    margin: auto;
+    padding: 45px 25px;
+}
+
+/* 欢迎区域 */
+
+.hero {
+    background: linear-gradient(120deg, #4268c9, #7598e8);
+    color: white;
+    padding: 48px 45px;
+    border-radius: 16px;
+    margin-bottom: 35px;
+}
+
+.hero h1 {
+    font-size: 32px;
+    margin-bottom: 13px;
+}
+
+.hero p {
+    font-size: 15px;
+    opacity: .85;
+    line-height: 1.8;
+}
+
+/* 搜索框 */
+
+.search-box {
+    margin-top: 27px;
+    max-width: 550px;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 9px;
+    outline: none;
+    font-size: 15px;
+    background: white;
+}
+
+/* 分类导航 */
+
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 30px;
+}
+
+.category {
+    border: 1px solid var(--border);
+    background: white;
+    padding: 9px 19px;
+    border-radius: 20px;
+    cursor: pointer;
+    color: #667085;
+    font-size: 14px;
+    transition: .2s;
+}
+
+.category:hover,
+.category.active {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+/* 标题 */
+
+.section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 19px;
+}
+
+.section-title h2 {
+    font-size: 21px;
+}
+
+.section-title span {
+    color: var(--sub);
+    font-size: 13px;
+}
+
+/* 工具卡片 */
+
+.tools-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+}
+
+.tool-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 23px;
+    transition: .2s;
+    display: flex;
+    flex-direction: column;
+    min-height: 175px;
+}
+
+.tool-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(40,60,100,.08);
+    border-color: #b9c9ef;
+}
+
+.tool-icon {
+    font-size: 27px;
+    margin-bottom: 15px;
+}
+
+.tool-card h3 {
+    font-size: 17px;
+    margin-bottom: 9px;
+}
+
+.tool-card p {
+    font-size: 13px;
+    color: var(--sub);
+    line-height: 1.7;
+    flex: 1;
+}
+
+.tool-card a {
+    display: inline-block;
+    margin-top: 17px;
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.tool-card a:hover {
+    text-decoration: underline;
+}
+
+.empty {
+    text-align: center;
+    padding: 50px;
+    color: var(--sub);
+    display: none;
+}
+
+/* 页脚 */
+
+footer {
+    text-align: center;
+    padding: 35px 15px;
+    color: #98a2b3;
+    font-size: 13px;
+    margin-top: 50px;
+    border-top: 1px solid var(--border);
+}
+
+/* 手机适配 */
+
+@media (max-width: 750px) {
+    header {
+        padding: 0 5%;
     }
 
-    /* 按键样式 */
-    .keypad .btn {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      aspect-ratio: 1 / 1;
-      padding: 4px;
-
-      background: #4CAF50;
-      color: white;
-      cursor: pointer;
-
-      border-radius: 6px;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-tap-highlight-color: transparent;
-
-      font-size: 18px;
-      box-sizing: border-box;
+    .container {
+        padding: 25px 17px;
     }
 
-    /* 鼠标悬停 */
-    .keypad .btn:hover {
-      background: #45a049;
+    .hero {
+        padding: 35px 25px;
     }
 
-    /* 按下 */
-    .keypad .btn:active {
-      background: #3d8b40;
+    .hero h1 {
+        font-size: 26px;
     }
 
-    /* 窄屏设备 */
-    @media (max-width: 500px) {
-      .keypad {
-        grid-template-columns: repeat(4, 1fr);
-        max-width: 100%;
-        gap: 6px;
-      }
-
-      .keypad .btn {
-        font-size: 16px;
-      }
+    .tools-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
     }
 
-    /* 公式编辑器样式 */
-    .formula-editor {
-      min-height: 60px;
-      border: 1px solid #ccc;
-      padding: 10px;
-      background: white;
-      font-size: 22px;
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 4px;
+    .tool-card {
+        padding: 17px;
     }
-    .slot {
-      min-width: 20px;
-      min-height: 28px;
-      display: inline-block;
-      outline: none;
-      border-bottom: 1px dashed #aaa;
-      padding: 0 4px;
-      vertical-align: middle;
-      line-height: 28px;
-    }
-    .slot:focus {
-      background: #eef;
-      border-bottom-color: #4CAF50;
-    }
-    .fraction {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      vertical-align: middle;
-      margin: 0 4px;
-    }
-    .fraction .numerator, .fraction .denominator {
-      display: block;
-      text-align: center;
-      min-width: 24px;
-    }
-    .fraction .bar {
-      display: block;
-      width: 100%;
-      border-top: 2px solid black;
-      margin: 2px 0;
-    }
-    .power {
-      display: inline-flex;
-      align-items: flex-start;
-      vertical-align: middle;
-      margin: 0 2px;
-    }
-    .power .base {
-      display: inline-block;
-    }
-    .power .exponent {
-      font-size: 0.7em;
-      vertical-align: super;
-      margin-left: 2px;
-      min-width: 16px;
-      min-height: 16px;
-      display: inline-block;
-      outline: none;
-      border-bottom: 1px dashed #aaa;
-    }
-    .sqrt {
-      display: inline-flex;
-      align-items: center;
-      vertical-align: middle;
-      margin: 0 2px;
-    }
-    .sqrt-symbol {
-      font-size: 1.4em;
-      margin-right: -2px;
-    }
-    .root {
-      display: inline-flex;
-      align-items: center;
-      vertical-align: middle;
-      margin: 0 2px;
-    }
-    .root-index {
-      font-size: 0.7em;
-      vertical-align: super;
-      margin-right: -4px;
-      min-width: 16px;
-      min-height: 16px;
-      display: inline-block;
-      outline: none;
-      border-bottom: 1px dashed #aaa;
-    }
-    .radicand {
-      border-top: 1px solid black;
-      padding: 0 4px;
+}
+
+@media (max-width: 430px) {
+    .tools-grid {
+        grid-template-columns: 1fr;
     }
 
-    /* 输出公式样式 */
-    .render-fraction {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: center;
-      vertical-align: middle;
-      margin: 0 4px;
+    nav a {
+        margin-left: 12px;
+        font-size: 13px;
     }
-    .render-fraction .render-num, .render-fraction .render-den {
-      display: block;
-      text-align: center;
-    }
-    .render-fraction .render-bar {
-      display: block;
-      width: 100%;
-      border-top: 2px solid black;
-      margin: 2px 0;
-    }
-    .render-power {
-      display: inline-flex;
-      align-items: flex-start;
-      vertical-align: middle;
-    }
-    .render-power .render-exp {
-      font-size: 0.7em;
-      vertical-align: super;
-      margin-left: 2px;
-    }
-    .render-sqrt {
-      display: inline-flex;
-      align-items: center;
-      vertical-align: middle;
-    }
-    .render-root {
-      display: inline-flex;
-      align-items: center;
-      vertical-align: middle;
-    }
-    .render-root .render-index {
-      font-size: 0.7em;
-      vertical-align: super;
-      margin-right: -4px;
-    }
-    .render-radicand {
-      border-top: 1px solid black;
-      padding: 0 4px;
-    }
-  </style>
+}
+</style>
 </head>
+
 <body>
-  <h1>单项式化简</h1>
-  <div id="calculator">
-    <!-- 公式编辑区：类似卡西欧自然书写输入 -->
-    <div id="formula-editor" class="formula-editor">
-      <span class="slot" contenteditable="true"></span>
+
+<!-- 顶部导航 -->
+
+<header>
+    <div class="logo">TOOLBOX FOR XCX</div>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="#tools">工具</a>
+        <a href="#about">关于</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <!-- 欢迎区域 -->
+
+    <section class="hero">
+        <h1>一个简单的工具箱</h1>
+        <p>
+            整理实用的在线工具，让计算、学习与工作更加方便。
+            <br>
+            Simple tools, efficient work.
+        </p>
+
+        <div class="search-box">
+            <input
+                type="text"
+                id="search"
+                placeholder="搜索工具名称或功能..."
+            >
+        </div>
+    </section>
+
+    <!-- 分类 -->
+
+    <div class="categories">
+        <button class="category active" data-category="全部">全部工具</button>
+        <button class="category" data-category="距离">计算距离</button>
+        <button class="category" data-category="面积">计算面积</button>
+        <button class="category" data-category="长度">计算长度</button>
+        <button class="category" data-category="其他">其他工具</button>
     </div>
 
-    <!-- 按键面板 -->
-    <div id="keypad" class="keypad">
-      <span class="btn" data-key="1">1</span>
-      <span class="btn" data-key="2">2</span>
-      <span class="btn" data-key="3">3</span>
-      <span class="btn" data-key="4">4</span>
-      <span class="btn" data-key="5">5</span>
-      <span class="btn" data-key="6">6</span>
-      <span class="btn" data-key="7">7</span>
-      <span class="btn" data-key="8">8</span>
-      <span class="btn" data-key="9">9</span>
-      <span class="btn" data-key="0">0</span>
-      <span class="btn" data-action="frac">分数</span>
-      <span class="btn" data-action="pow">幂</span>
-      <span class="btn" data-action="sqrt">√</span>
-      <span class="btn" data-action="root">ⁿ√</span>
-      <span class="btn" data-action="backspace">退格</span>
-      <span class="btn" data-action="clear">清空</span>
-    </div>
+    <!-- 工具列表 -->
 
-    <button onclick="simplify()" style="margin-top: 10px; font-size: 18px;">化简</button>
-    <div id="result"></div>
-  </div>
+    <section id="tools">
 
-  <script>
-    // ==================== 原有 Fraction 和 Monomial 类 ====================
-    class Fraction {
-      constructor(numerator, denominator) {
-        this.numerator = numerator;
-        this.denominator = denominator;
-        this.simplify();
-      }
+        <div class="section-title">
+            <h2>工具列表</h2>
+            <span id="count">0 个工具</span>
+        </div>
 
-      simplify() {
-        const gcd = this.gcd(this.numerator, this.denominator);
-        this.numerator /= gcd;
-        this.denominator /= gcd;
-        if (this.denominator < 0) {
-          this.numerator *= -1;
-          this.denominator *= -1;
-        }
-      }
+        <div class="tools-grid" id="toolGrid"></div>
 
-      gcd(a, b) {
-        a = Math.abs(a);
-        b = Math.abs(b);
-        return b === 0 ? a : this.gcd(b, a % b);
-      }
+        <div class="empty" id="empty">
+            没有找到相关工具
+        </div>
 
-      // 整数 N 的 k 次根，返回 coef · index√radicand / den（den 恒为 1）
-      rootOfInteger(N, k) {
-        if (N === 0) return { coef: 0, radicand: 1, index: 1, den: 1 };
-        const isNeg = N < 0;
-        if (isNeg && k % 2 === 0) throw new Error("偶次根号负数");
+    </section>
 
-        const absN = Math.abs(N);
-        const factors = this.factorize(absN);
+</main>
 
-        // 用所有质因数指数与 k 的公共 gcd 来约分 k
-        // 例如 ⁶√27 = ⁶√(3³)，gcd(6,3)=3 → √3
-        let g = k;
-        for (const p in factors) {
-          g = this.gcd(g, factors[p]);
-        }
-        if (g > 1) {
-          k = k / g;
-          for (const p in factors) {
-            factors[p] = factors[p] / g;
-          }
-        }
+<footer id="about">
+    <p>TOOLBOX FOR XCX</p>
+    <p style="margin-top:8px">
+        Designed for convenience.
+    </p>
+    <p><a href = "https://novacyclone.github.io/NovacyclonePersonalGateway/">关于我们</a></p>
+</footer>
 
-        // 提取完全 k 次幂
-        let coef = 1;
-        let radicand = 1;
-        for (const p in factors) {
-          const e = factors[p];
-          const pi = parseInt(p);
-          const full = Math.floor(e / k);
-          const rem = e % k;
-          coef *= Math.pow(pi, full);
-          radicand *= Math.pow(pi, rem);
-        }
-        if (isNeg) coef = -coef;
+<script>
 
-        if (radicand === 1) {
-          return { coef, radicand: 1, index: 1, den: 1 };
-        }
-        return { coef, radicand, index: k, den: 1 };
-      }
+// ==================================
+// 工具配置区：在这里添加或修改工具
+// ==================================
 
-      // 整数质因数分解
-      factorize(n) {
-        const factors = {};
-        n = Math.abs(n);
-        for (let d = 2; d * d <= n; d++) {
-          while (n % d === 0) {
-            factors[d] = (factors[d] || 0) + 1;
-            n /= d;
-          }
-        }
-        if (n > 1) factors[n] = (factors[n] || 0) + 1;
-        return factors;
-      }
+const tools = [
+
+    {
+        name: "普通计算器",
+        icon: "📐",
+        category: "其他",
+        description: "一个正常的计算器……",
+        url: "monomial.html"
+    },
+
+    {
+        name: "平面两点距离",
+        icon: "∑",
+        category: "距离",
+        description: "计算平面上两点距离",
+        url: "distance2.html"
+    },
+
+    {
+        name: "占位符",
+        icon: "🧮",
+        category: "其他",
+        description: "快速进行常用数学公式计算。",
+        url: "#"
+    },
+
+    {
+        name: "占位符",
+        icon: "⚛️",
+        category: "其他",
+        description: "常用物理公式与物理量计算。",
+        url: "#"
+    },
+
+    {
+        name: "占位符",
+        icon: "🧪",
+        category: "其他",
+        description: "辅助完成常见化学计算。",
+        url: "#"
+    },
+
+    {
+        name: "占位符",
+        icon: "🔄",
+        category: "其他",
+        description: "常用物理单位之间的换算。",
+        url: "#"
     }
 
-    class Monomial {
-      constructor(expression) {
-        this.expression = expression.trim();
-      }
+];
 
-      simplify() {
-        try {
-          const val = this.evalExpression(this.expression);
-          return this.valueToString(val);
-        } catch (e) {
-          return `错误: ${e.message}`;
-        }
-      }
+// ==================================
+// 页面渲染
+// ==================================
 
-      // 把表达式求值为值对象 {coef, radicand, index, den}
-      // 表示 coef · index√radicand / den
-      evalExpression(expr) {
-        expr = expr.trim();
-        if (expr === '') throw new Error("空表达式");
-        
-        // 去除包裹整个表达式的多余括号
-        // 例如：(a/b) → a/b，((a/b)) → a/b
-        while (expr.startsWith('(') && expr.endsWith(')')) {
-          let depth = 0;
-          let enclosesAll = true;
+const grid = document.getElementById("toolGrid");
+const search = document.getElementById("search");
+const count = document.getElementById("count");
+const empty = document.getElementById("empty");
 
-          for (let i = 0; i < expr.length; i++) {
-            if (expr[i] === '(') depth++;
-            if (expr[i] === ')') depth--;
+let currentCategory = "全部";
 
-            // 如果最外层括号在表达式结束前已经闭合，
-            // 说明它并没有包裹整个表达式
-            if (depth === 0 && i < expr.length - 1) {
-              enclosesAll = false;
-              break;
-            }
+function renderTools() {
 
-            if (depth < 0) {
-              throw new Error("括号不匹配");
-            }
-          }
+    const keyword = search.value.trim().toLowerCase();
 
-          if (depth !== 0) {
-            throw new Error("括号不匹配");
-          }
+    const filtered = tools.filter(tool => {
 
-          if (!enclosesAll) break;
+        const matchCategory =
+            currentCategory === "全部" ||
+            tool.category === currentCategory;
 
-          expr = expr.substring(1, expr.length - 1).trim();
-        }
+        const matchSearch =
+            tool.name.toLowerCase().includes(keyword) ||
+            tool.description.toLowerCase().includes(keyword) ||
+            tool.category.toLowerCase().includes(keyword);
 
-        // 处理普通除法 /
-        // 除法按从左到右结合：a / b / c = (a / b) / c
-        // 因此寻找“最右侧”的顶层 /，使左侧先整体计算。
+        return matchCategory && matchSearch;
 
-        // 处理普通除法 /
-        // 除法按从左到右结合：a / b / c = (a / b) / c
-        // 从右向左寻找最后一个顶层 /，保证左侧先整体计算
-
-        let depth = 0;
-        let lastSlash = -1;
-
-        for (let i = 0; i < expr.length; i++) {
-          const c = expr[i];
-
-          if (c === '(') {
-            depth++;
-          } else if (c === ')') {
-            depth--;
-            if (depth < 0) {
-              throw new Error("括号不匹配");
-            }
-          } else if (c === '/' && depth === 0) {
-            lastSlash = i;
-          }
-        }
-
-        if (depth !== 0) {
-          throw new Error("括号不匹配");
-        }
-
-        if (lastSlash !== -1) {
-          const left = expr.substring(0, lastSlash).trim();
-          const right = expr.substring(lastSlash + 1).trim();
-
-          if (!left || !right) {
-            throw new Error("除法表达式不完整");
-          }
-
-          return this.divideValues(
-            this.evalExpression(left),
-            this.evalExpression(right)
-          );
-        }
-
-        if (this.isNumber(expr)) {
-          return { coef: parseInt(expr), radicand: 1, index: 1, den: 1 };
-        }
-
-        if (expr.startsWith("r(") && expr.endsWith(")")) {
-          const content = expr.substring(2, expr.length - 1);
-          const parts = this.splitArguments(content);
-          if (parts.length === 3) {
-            // 递归解析参数，支持嵌套表达式
-            const coefVal = this.evalExpression(parts[0].trim());
-            const radicandVal = this.evalExpression(parts[1].trim());
-            const indexVal = this.evalExpression(parts[2].trim());
-            const coefInt = this.valueToInteger(coefVal);
-            const radicandInt = this.valueToInteger(radicandVal);
-            const indexInt = this.valueToInteger(indexVal);
-            if (coefInt === null || radicandInt === null || indexInt === null) {
-              throw new Error("r() 的参数必须为整数");
-            }
-            if (indexInt <= 0) throw new Error("根指数必须为正整数");
-            if (radicandInt < 0 && indexInt % 2 === 0) throw new Error("偶次根号负数");
-            return this.normalizeValue({
-              coef: coefInt,
-              radicand: radicandInt,
-              index: indexInt,
-              den: 1
-            });
-          }
-        }
-
-        if (expr.startsWith("d(") && expr.endsWith(")")) {
-          const content = expr.substring(2, expr.length - 1);
-          const parts = this.splitArguments(content);
-          if (parts.length === 2) {
-            const a = this.evalExpression(parts[0].trim());
-            const b = this.evalExpression(parts[1].trim());
-            return this.divideValues(a, b);
-          }
-        }
-
-        if (expr.startsWith("p(") && expr.endsWith(")")) {
-          const content = expr.substring(2, expr.length - 1);
-          const parts = this.splitArguments(content);
-          if (parts.length === 2) {
-            const base = this.evalExpression(parts[0].trim());
-            const exp = this.evalExpression(parts[1].trim());
-            return this.powerValues(base, exp);
-          }
-        }
-
-        if (expr.startsWith("sqrt(") && expr.endsWith(")")) {
-          const content = expr.substring(5, expr.length - 1).trim();
-          const inner = this.evalExpression(content);
-          return this.rootValue(inner, 2);
-        }
-
-        if (expr.startsWith("root(") && expr.endsWith(")")) {
-          const content = expr.substring(5, expr.length - 1);
-          const parts = this.splitArguments(content);
-          if (parts.length === 2) {
-            const kVal = this.evalExpression(parts[0].trim());
-            const nVal = this.evalExpression(parts[1].trim());
-            const kInt = this.valueToInteger(kVal);
-            if (kInt !== null && kInt > 0) {
-              return this.rootValue(nVal, kInt);
-            }
-            throw new Error("根指数必须为正整数");
-          }
-        }
-
-        throw new Error(`无效表达式: ${expr}`);
-      }
-
-      valueToInteger(v) {
-        if (v.radicand === 1 && v.index === 1 && v.den === 1) return v.coef;
-        return null;
-      }
-
-      // 统一规范化值对象：约分、化简根式、分母正负调整
-      normalizeValue(v) {
-        if (v.den !== 1 && v.coef !== 0) {
-          const g = this.gcd(Math.abs(v.coef), Math.abs(v.den));
-          v.coef /= g;
-          v.den /= g;
-        }
-        if (v.den < 0) { v.coef = -v.coef; v.den = -v.den; }
-
-        if (v.radicand > 1 && v.index > 1) {
-          const r = this.rootOfInteger(v.radicand, v.index);
-          v.coef *= r.coef;
-          v.radicand = r.radicand;
-          v.index = r.index;
-          v.den *= r.den;
-
-          if (v.den !== 1 && v.coef !== 0) {
-            const g = this.gcd(Math.abs(v.coef), Math.abs(v.den));
-            v.coef /= g;
-            v.den /= g;
-          }
-          if (v.den < 0) { v.coef = -v.coef; v.den = -v.den; }
-        }
-        if (v.radicand === 1) v.index = 1;
-        if (v.coef === 0) { v.radicand = 1; v.index = 1; v.den = 1; }
-        return v;
-      }
-
-      // 求 k 次根号：v = coef · index√radicand / den
-      // 返回 { coef, radicand, index, den }
-      rootValue(v, k) {
-        const { coef, radicand, index, den } = v;
-
-        if (coef === 0) return { coef: 0, radicand: 1, index: 1, den: 1 };
-        if (k <= 0) throw new Error("根指数必须为正整数");
-
-        // 情况 A：v 是有理数 coef/den
-        if (index === 1 && radicand === 1) {
-          if (coef < 0 && k % 2 === 0) throw new Error("偶次根号负数");
-          // k√(coef/den) = k√(coef · den^(k-1)) / den
-          const N = coef * Math.pow(den, k - 1);
-          const r = this.rootOfInteger(N, k);
-          return this.normalizeValue({
-            coef: r.coef,
-            radicand: r.radicand,
-            index: r.index,
-            den: r.den * den
-          });
-        }   // ←←← 就是这里，原来少了一个右大括号
-
-        // 情况 B：v 本身含根号
-        // k√(coef · index√radicand / den)
-        //   = k√coef · (index·k)√radicand / k√den
-        // 把 k√coef 与 (index·k)√radicand 统一为 M 次根，再对 k√den 有理化
-        if (coef < 0 && k % 2 === 0) throw new Error("偶次根号负数");
-
-        const sign = coef < 0 ? -1 : 1;
-        const absCoef = Math.abs(coef);
-        const M = index * k;
-
-        // 分子：|coef|^index · radicand · den^(M - index)
-        // 分母：den
-        const N2 = Math.pow(absCoef, index) * radicand * Math.pow(den, M - index);
-
-        if (!isFinite(N2) || N2 > Number.MAX_SAFE_INTEGER) {
-          throw new Error("根式化简数值溢出");
-        }
-
-        const r2 = this.rootOfInteger(N2, M);
-        return this.normalizeValue({
-          coef: sign * r2.coef,
-          radicand: r2.radicand,
-          index: r2.index,
-          den: r2.den * den
-        });
-      }
-
-      // 除法 a / b
-      divideValues(a, b) {
-        if (b.coef === 0) throw new Error("除零");
-
-        // 分母是有理数：直接乘倒数
-        if (b.radicand === 1 && b.index === 1) {
-          return this.normalizeValue({
-            coef: a.coef * b.den,
-            radicand: a.radicand,
-            index: a.index,
-            den: a.den * b.coef
-          });
-        }
-
-        // 分母含根式：a / b = a · (1/b)
-        // 1 / (c · k√r / d) = d · k√(r^(k-1)) / (c · r)
-        const k = b.index;
-        const r = b.radicand;
-        const invB = {
-          coef: b.den,
-          radicand: Math.pow(r, k - 1),
-          index: k,
-          den: b.coef * r
-        };
-        return this.multiplyValues(a, invB);
-      }
-
-      // 乘法 a · b
-      multiplyValues(a, b) {
-        const coef = a.coef * b.coef;
-        const den = a.den * b.den;
-
-        const aRational = (a.radicand === 1 && a.index === 1);
-        const bRational = (b.radicand === 1 && b.index === 1);
-
-        let radicand, index;
-
-        if (aRational) {
-          radicand = b.radicand;
-          index = b.index;
-        } else if (bRational) {
-          radicand = a.radicand;
-          index = a.index;
-        } else if (a.index === b.index) {
-          // 同根指数：ᵏ√a · ᵏ√b = ᵏ√(ab)
-          radicand = a.radicand * b.radicand;
-          index = a.index;
-        } else {
-          // 不同根指数：ᵏ√a · ᵐ√b = ᵏᵐ√(aᵐ · bᵏ)
-          const M = a.index * b.index;
-          radicand = Math.pow(a.radicand, b.index) * Math.pow(b.radicand, a.index);
-          index = M;
-        }
-
-        if (radicand === 1) {
-          return this.normalizeValue({ coef, radicand: 1, index: 1, den });
-        }
-
-        const simplified = this.rootOfInteger(radicand, index);
-        return this.normalizeValue({
-          coef: coef * simplified.coef,
-          radicand: simplified.radicand,
-          index: simplified.index,
-          den: den * simplified.den
-        });
-      }
-
-      // 幂 base^exp，exp 必须是整数
-      powerValues(base, exp) {
-        const eInt = this.valueToInteger(exp);
-        if (eInt === null) throw new Error("指数必须为整数");
-
-        if (eInt === 0) return this.normalizeValue({ coef: 1, radicand: 1, index: 1, den: 1 });
-        if (eInt < 0) {
-          const pos = this.powerValues(base, { coef: -eInt, radicand: 1, index: 1, den: 1 });
-          return this.divideValues({ coef: 1, radicand: 1, index: 1, den: 1 }, pos);
-        }
-
-        const { coef: c, radicand: n, index: k, den: d } = base;
-        const newC = Math.pow(c, eInt);
-        const newD = Math.pow(d, eInt);
-
-        if (n === 1) {
-          return this.normalizeValue({ coef: newC, radicand: 1, index: 1, den: newD });
-        }
-        // (k√n)^e = n^(e/k) 或 k√(n^e)
-        if (eInt % k === 0) {
-          const inner = Math.pow(n, eInt / k);
-          return this.normalizeValue({ coef: newC * inner, radicand: 1, index: 1, den: newD });
-        } else {
-          const newN = Math.pow(n, eInt);
-          const simplified = this.rootValue({ coef: 1, radicand: newN, index: 1, den: 1 }, k);
-          return this.normalizeValue({
-            coef: newC * simplified.coef,
-            radicand: simplified.radicand,
-            index: simplified.index,
-            den: newD
-          });
-        }
-      }
-
-      // 值对象 → 字符串
-      valueToString(v) {
-        // 约分 coef 与 den
-        v = this.normalizeValue(v);
-        if (v.den !== 1 && v.coef !== 0) {
-          const g = this.gcd(Math.abs(v.coef), Math.abs(v.den));
-          v.coef /= g;
-          v.den /= g;
-        }
-        if (v.den < 0) { v.coef = -v.coef; v.den = -v.den; }
-
-        if (v.radicand === 1 && v.index === 1) {
-          return `d(${v.coef},${v.den})`;
-        }
-        if (v.den === 1) {
-          return `r(${v.coef},${v.radicand},${v.index})`;
-        }
-        return `d(r(${v.coef},${v.radicand},${v.index}),${v.den})`;
-      }
-
-      gcd(a, b) {
-        a = Math.abs(a);
-        b = Math.abs(b);
-        return b === 0 ? a : this.gcd(b, a % b);
-      }
-
-      // 整数 N 的 k 次根，返回 coef · index√radicand / den（den 恒为 1）
-      rootOfInteger(N, k) {
-        if (N === 0) return { coef: 0, radicand: 1, index: 1, den: 1 };
-        const isNeg = N < 0;
-        if (isNeg && k % 2 === 0) throw new Error("偶次根号负数");
-
-        const absN = Math.abs(N);
-        const factors = this.factorize(absN);
-
-        // 用所有质因数指数与 k 的公共 gcd 来约分 k
-        // 例如 ⁶√27 = ⁶√(3³)，gcd(6,3)=3 → √3
-        let g = k;
-        for (const p in factors) {
-          g = this.gcd(g, factors[p]);
-        }
-        if (g > 1) {
-          k = k / g;
-          for (const p in factors) {
-            factors[p] = factors[p] / g;
-          }
-        }
-
-        // 提取完全 k 次幂
-        let coef = 1;
-        let radicand = 1;
-        for (const p in factors) {
-          const e = factors[p];
-          const pi = parseInt(p);
-          const full = Math.floor(e / k);
-          const rem = e % k;
-          coef *= Math.pow(pi, full);
-          radicand *= Math.pow(pi, rem);
-        }
-        if (isNeg) coef = -coef;
-
-        if (radicand === 1) {
-          return { coef, radicand: 1, index: 1, den: 1 };
-        }
-        return { coef, radicand, index: k, den: 1 };
-      }
-
-      // 整数质因数分解
-      factorize(n) {
-        const factors = {};
-        n = Math.abs(n);
-        for (let d = 2; d * d <= n; d++) {
-          while (n % d === 0) {
-            factors[d] = (factors[d] || 0) + 1;
-            n /= d;
-          }
-        }
-        if (n > 1) factors[n] = (factors[n] || 0) + 1;
-        return factors;
-      }
-
-      splitArguments(content) {
-        const parts = [];
-        let depth = 0, start = 0;
-        for (let i = 0; i < content.length; i++) {
-          const c = content[i];
-          if (c === '(') depth++;
-          if (c === ')') depth--;
-          if (c === ',' && depth === 0) {
-            parts.push(content.substring(start, i));
-            start = i + 1;
-          }
-        }
-        parts.push(content.substring(start));
-        return parts;
-      }
-
-      isNumber(s) { return /^-?\d+$/.test(s); }
-    }
-
-    // ==================== 公式编辑器逻辑 ====================
-    let currentSlot = null;
-    let savedRange = null;
-
-    // 保存当前编辑器中的光标位置
-    function saveEditorSelection() {
-        const sel = window.getSelection();
-        if (!sel || sel.rangeCount === 0) return;
-
-        const range = sel.getRangeAt(0);
-        const editor = document.getElementById('formula-editor');
-
-        if (editor.contains(range.commonAncestorContainer)) {
-            savedRange = range.cloneRange();
-        }
-    }
-
-    function getActiveSlot() {
-      const ae = document.activeElement;
-      if (ae && ae.classList && ae.classList.contains('slot') && document.contains(ae)) {
-        currentSlot = ae;
-        return currentSlot;
-      }
-      if (currentSlot && document.contains(currentSlot)) return currentSlot;
-      currentSlot = document.querySelector('#formula-editor .slot');
-      return currentSlot;
-    }
-    function placeCaretAtEnd(el) {
-      if (!el) return;
-      el.focus();
-
-      const range = document.createRange();
-      range.selectNodeContents(el);
-      range.collapse(false);
-
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-    }
-    // 用「插入到光标处」的方式写文字，而不是 textContent +=
-    function setSlotText(slot, text) {
-        if (!slot) return;
-
-        slot.focus();
-
-        const sel = window.getSelection();
-
-        // 优先恢复之前保存的光标位置
-        let range = savedRange ? savedRange.cloneRange() : null;
-
-        // 检查保存的光标是否仍然位于当前输入框内
-        const isInsideSlot = range &&
-            (range.startContainer === slot || slot.contains(range.startContainer)) &&
-            (range.endContainer === slot || slot.contains(range.endContainer));
-
-        // 如果光标无效，则将光标放到输入框末尾
-        if (!isInsideSlot) {
-            range = document.createRange();
-            range.selectNodeContents(slot);
-            range.collapse(false);
-        }
-
-        // 在光标位置插入文字
-        range.deleteContents();
-
-        const node = document.createTextNode(text);
-        range.insertNode(node);
-
-        // 将光标移动到新插入文字的后面
-        range.setStartAfter(node);
-        range.collapse(true);
-
-        sel.removeAllRanges();
-        sel.addRange(range);
-
-        // 更新保存的光标位置
-        savedRange = range.cloneRange();
-        currentSlot = slot;
-    }
-
-
-    // 焦点跟踪
-    document.addEventListener('focusin', (e) => {
-      if (e.target.classList && e.target.classList.contains('slot')) {
-        currentSlot = e.target;
-      }
     });
 
-    // 点击编辑器空白，聚焦第一个 slot
-    document.getElementById('formula-editor').addEventListener('click', (e) => {
-      if (e.target.id === 'formula-editor') {
-        const firstSlot = e.target.querySelector('.slot');
-        if (firstSlot) firstSlot.focus();
-      }
+    grid.innerHTML = filtered.map(tool => `
+
+        <div class="tool-card">
+
+            <div class="tool-icon">${tool.icon}</div>
+
+            <h3>${tool.name}</h3>
+
+            <p>${tool.description}</p>
+
+            <a href="${tool.url}">
+                进入工具 →
+            </a>
+
+        </div>
+
+    `).join("");
+
+    count.textContent = filtered.length + " 个工具";
+
+    empty.style.display =
+        filtered.length === 0 ? "block" : "none";
+}
+
+// 搜索
+
+search.addEventListener("input", renderTools);
+
+// 分类切换
+
+document.querySelectorAll(".category").forEach(button => {
+
+    button.addEventListener("click", () => {
+
+        document.querySelector(".category.active")
+            .classList.remove("active");
+
+        button.classList.add("active");
+
+        currentCategory = button.dataset.category;
+
+        renderTools();
+
     });
-    // 点击网页键盘前，先保存编辑器中的光标位置
-    document.getElementById('keypad').addEventListener('mousedown', (e) => {
-        const btn = e.target.closest('.btn');
-        if (!btn) return;
 
-        saveEditorSelection();
+});
 
-        // 防止鼠标按下时网页键盘抢走编辑器焦点
-        e.preventDefault();
-    });
-    // 按键处理
-    document.getElementById('keypad').addEventListener('click', (e) => {
-      const btn = e.target.closest('.btn');
-      if (!btn) return;
+// 初始化
 
-      if (btn.dataset.key !== undefined) {
-        insertText(btn.dataset.key);
-      } else if (btn.dataset.action === 'frac') {
-        insertFraction();
-      } else if (btn.dataset.action === 'pow') {
-        insertPower();
-      } else if (btn.dataset.action === 'sqrt') {
-        insertSqrt();
-      } else if (btn.dataset.action === 'root') {
-        insertRoot();
-      } else if (btn.dataset.action === 'backspace') {
-        backspace();
-      } else if (btn.dataset.action === 'clear') {
-        clearEditor();
-      }
-    });
+renderTools();
 
-    function insertText(text) {
-      const slot = getActiveSlot();
-      if (!slot) return;
-      setSlotText(slot, text);
-    }
+</script>
 
-    function insertFraction() {
-      const slot = getActiveSlot();
-      if (!slot) return;
-
-      const wrapper = document.createElement('span');
-      wrapper.className = slot.className;      // 保留外层类名，如 slot numerator
-      wrapper.contentEditable = 'false';       // 不可编辑
-
-      const frac = document.createElement('span');
-      frac.className = 'fraction';
-      frac.innerHTML = `
-        <span class="slot numerator" contenteditable="true"></span>
-        <span class="bar"></span>
-        <span class="slot denominator" contenteditable="true"></span>
-      `;
-      const numerator = frac.querySelector('.numerator');
-      while (slot.firstChild) {
-        numerator.appendChild(slot.firstChild); // 移动原有内容到分子
-      }
-      wrapper.appendChild(frac);
-
-      slot.parentNode.replaceChild(wrapper, slot);
-
-      currentSlot = numerator;
-      placeCaretAtEnd(numerator);
-    }
-
-    function insertPower() {
-      const slot = getActiveSlot();
-      if (!slot) return;
-
-      const wrapper = document.createElement('span');
-      wrapper.className = slot.className;
-      wrapper.contentEditable = 'false';
-
-      const power = document.createElement('span');
-      power.className = 'power';
-      power.innerHTML = `
-        <span class="slot base" contenteditable="true"></span>
-        <sup class="slot exponent" contenteditable="true"></sup>
-      `;
-      const base = power.querySelector('.base');
-      const exponent = power.querySelector('.exponent');
-      while (slot.firstChild) {
-        base.appendChild(slot.firstChild);
-      }
-      wrapper.appendChild(power);
-
-      slot.parentNode.replaceChild(wrapper, slot);
-
-      currentSlot = exponent;
-      placeCaretAtEnd(exponent);
-    }
-
-    function insertSqrt() {
-      const slot = getActiveSlot();
-      if (!slot) return;
-
-      const wrapper = document.createElement('span');
-      wrapper.className = slot.className;
-      wrapper.contentEditable = 'false';
-
-      const sqrt = document.createElement('span');
-      sqrt.className = 'sqrt';
-      sqrt.innerHTML = `
-        <span class="sqrt-symbol">√</span>
-        <span class="slot radicand" contenteditable="true"></span>
-      `;
-      const radicand = sqrt.querySelector('.radicand');
-      while (slot.firstChild) {
-        radicand.appendChild(slot.firstChild);
-      }
-      wrapper.appendChild(sqrt);
-
-      slot.parentNode.replaceChild(wrapper, slot);
-
-      currentSlot = radicand;
-      placeCaretAtEnd(radicand);
-    }
-
-    function insertRoot() {
-      const slot = getActiveSlot();
-      if (!slot) return;
-
-      const wrapper = document.createElement('span');
-      wrapper.className = slot.className;
-      wrapper.contentEditable = 'false';
-
-      const root = document.createElement('span');
-      root.className = 'root';
-      root.innerHTML = `
-        <sup class="slot root-index" contenteditable="true"></sup>
-        <span class="sqrt-symbol">√</span>
-        <span class="slot radicand" contenteditable="true"></span>
-      `;
-      const index = root.querySelector('.root-index');
-      const radicand = root.querySelector('.radicand');
-      while (slot.firstChild) {
-        radicand.appendChild(slot.firstChild);
-      }
-      wrapper.appendChild(root);
-
-      slot.parentNode.replaceChild(wrapper, slot);
-
-      currentSlot = index;
-      placeCaretAtEnd(index);
-    }
-
-    function backspace() {
-      const slot = getActiveSlot();
-      if (!slot) return;
-
-      slot.focus();
-
-      if (slot.textContent.length > 0) {
-        slot.textContent = slot.textContent.slice(0, -1);
-      }
-
-      placeCaretAtEnd(slot);
-    }
-
-    function clearEditor() {
-      const editor = document.getElementById('formula-editor');
-      editor.innerHTML = '<span class="slot" contenteditable="true"></span>';
-      currentSlot = editor.querySelector('.slot');
-
-      placeCaretAtEnd(currentSlot);
-    }
-
-    // 导出公式为内部字符串，例如 d(3,5)、p(d(3,5),2)、sqrt(2)、root(3,2)
-
-    // 导出公式为内部字符串
-    function exportFormula(node) {
-
-      if (!node) return '';
-
-      // 普通输入框
-      if (node.classList && node.classList.contains('slot')) {
-        let result = '';
-
-        for (const child of node.childNodes) {
-          if (child.nodeType === Node.TEXT_NODE) {
-            result += child.textContent;
-          } else if (child.nodeType === Node.ELEMENT_NODE) {
-            result += exportFormula(child);
-          }
-        }
-
-        return result.trim();
-      }
-
-      // 分式：只获取当前 fraction 的直接子节点
-      if (node.classList && node.classList.contains('fraction')) {
-        const numNode = node.querySelector(':scope > .numerator');
-        const denNode = node.querySelector(':scope > .denominator');
-
-        const num = exportFormula(numNode);
-        const den = exportFormula(denNode);
-
-        return `d(${num || '0'},${den || '1'})`;
-      }
-
-      // 幂
-      if (node.classList && node.classList.contains('power')) {
-        const baseNode = node.querySelector(':scope > .base');
-        const expNode = node.querySelector(':scope > .exponent');
-
-        const base = exportFormula(baseNode);
-        const exp = exportFormula(expNode);
-
-        return `p(${base || '0'},${exp || '1'})`;
-      }
-
-      // 平方根
-      if (node.classList && node.classList.contains('sqrt')) {
-        const radNode = node.querySelector(':scope > .radicand');
-        const radicand = exportFormula(radNode);
-
-        return `sqrt(${radicand || '0'})`;
-      }
-
-      // n 次根
-      if (node.classList && node.classList.contains('root')) {
-        const indexNode = node.querySelector(':scope > .root-index');
-        const radNode = node.querySelector(':scope > .radicand');
-
-        const index = exportFormula(indexNode);
-        const radicand = exportFormula(radNode);
-
-        return `root(${index || '2'},${radicand || '0'})`;
-      }
-
-      // 其他容器：遍历子节点
-      let result = '';
-
-      for (const child of node.childNodes) {
-        if (child.nodeType === Node.TEXT_NODE) {
-          result += child.textContent;
-        } else if (child.nodeType === Node.ELEMENT_NODE) {
-          result += exportFormula(child);
-        }
-      }
-
-      return result;
-    }
-
-
-    // ==================== 输出公式渲染 ====================
-    function renderFormula(expr) {
-      expr = expr.trim();
-      if (!expr) return document.createTextNode('');
-
-      if (expr.startsWith('d(')) {
-        const content = extractParenthesesContent(expr, 1);
-        const parts = splitArgs(content);
-        if (parts.length === 2) {
-          // 分母为 1，直接显示分子
-          if (parts[1] === '1') {
-            return renderFormula(parts[0]);
-          }
-          const frac = document.createElement('span');
-          frac.className = 'render-fraction';
-          const num = document.createElement('span');
-          num.className = 'render-num';
-          num.appendChild(renderFormula(parts[0]));
-          const bar = document.createElement('span');
-          bar.className = 'render-bar';
-          const den = document.createElement('span');
-          den.className = 'render-den';
-          den.appendChild(renderFormula(parts[1]));
-          frac.appendChild(num);
-          frac.appendChild(bar);
-          frac.appendChild(den);
-          return frac;
-        }
-      }
-
-      if (expr.startsWith('p(')) {
-        const content = extractParenthesesContent(expr, 1);
-        const parts = splitArgs(content);
-        if (parts.length === 2) {
-          const power = document.createElement('span');
-          power.className = 'render-power';
-          const base = document.createElement('span');
-          base.className = 'render-base';
-          base.appendChild(renderFormula(parts[0]));
-          const exp = document.createElement('sup');
-          exp.className = 'render-exp';
-          exp.appendChild(renderFormula(parts[1]));
-          power.appendChild(base);
-          power.appendChild(exp);
-          return power;
-        }
-      }
-
-      if (expr.startsWith('r(')) {
-        const content = extractParenthesesContent(expr, 1);
-        const parts = splitArgs(content);
-        if (parts.length === 3) {
-          const coef = parseInt(parts[0]);
-          const radicandStr = parts[1];
-          const index = parseInt(parts[2]);
-
-          const wrap = document.createElement('span');
-          wrap.className = 'render-root';
-
-          if (coef === -1) {
-            wrap.appendChild(document.createTextNode('-'));
-          } else if (coef !== 1) {
-            const coefSpan = document.createElement('span');
-            coefSpan.textContent = coef;
-            wrap.appendChild(coefSpan);
-          }
-
-          if (index !== 2) {
-            const idx = document.createElement('sup');
-            idx.className = 'render-index';
-            idx.textContent = index;
-            wrap.appendChild(idx);
-          }
-          wrap.appendChild(document.createTextNode('√'));
-
-          const rad = document.createElement('span');
-          rad.className = 'render-radicand';
-          rad.appendChild(renderFormula(radicandStr));
-          wrap.appendChild(rad);
-
-          return wrap;
-        }
-      }
-
-      if (expr.startsWith('sqrt(')) {
-        const content = extractParenthesesContent(expr, 4);
-        const sqrt = document.createElement('span');
-        sqrt.className = 'render-sqrt';
-        sqrt.appendChild(document.createTextNode('√'));
-        const radicand = document.createElement('span');
-        radicand.className = 'render-radicand';
-        radicand.appendChild(renderFormula(content));
-        sqrt.appendChild(radicand);
-        return sqrt;
-      }
-
-      if (expr.startsWith('root(')) {
-        const content = extractParenthesesContent(expr, 4);
-        const parts = splitArgs(content);
-        if (parts.length === 2) {
-          const root = document.createElement('span');
-          root.className = 'render-root';
-          const index = document.createElement('sup');
-          index.className = 'render-index';
-          index.appendChild(renderFormula(parts[0]));
-          root.appendChild(index);
-          root.appendChild(document.createTextNode('√'));
-          const radicand = document.createElement('span');
-          radicand.className = 'render-radicand';
-          radicand.appendChild(renderFormula(parts[1]));
-          root.appendChild(radicand);
-          return root;
-        }
-      }
-
-      return document.createTextNode(expr);
-    }
-
-    // 辅助：提取括号内容，startIndex 是 '(' 在字符串中的位置
-    function extractParenthesesContent(str, startIndex) {
-      let depth = 0;
-      let end = -1;
-      for (let i = startIndex; i < str.length; i++) {
-        if (str[i] === '(') depth++;
-        if (str[i] === ')') {
-          depth--;
-          if (depth === 0) {
-            end = i;
-            break;
-          }
-        }
-      }
-      if (end === -1) return '';
-      return str.substring(startIndex + 1, end);
-    }
-
-    // 辅助：分割参数，考虑嵌套括号
-    function splitArgs(content) {
-      const parts = [];
-      let depth = 0;
-      let start = 0;
-      for (let i = 0; i < content.length; i++) {
-        const c = content[i];
-        if (c === '(') depth++;
-        if (c === ')') depth--;
-        if (c === ',' && depth === 0) {
-          parts.push(content.substring(start, i).trim());
-          start = i + 1;
-        }
-      }
-      parts.push(content.substring(start).trim());
-      return parts;
-    }
-
-    // ==================== 化简函数 ====================
-    function simplify() {
-      const editor = document.getElementById('formula-editor');
-      // 导出编辑器根节点的内部字符串
-      const expr = exportFormula(editor.firstElementChild);
-      const monomial = new Monomial(expr);
-      const resultStr = monomial.simplify();
-      // 以公式形式显示结果
-      const resultDiv = document.getElementById('result');
-      resultDiv.innerHTML = '';
-      resultDiv.appendChild(renderFormula(resultStr));
-    }
-
-    // 初始化焦点
-    window.onload = function() {
-      currentSlot = document.querySelector('#formula-editor .slot');
-      if (currentSlot) currentSlot.focus();
-    };
-  </script>
 </body>
 </html>
