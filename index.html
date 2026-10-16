@@ -304,9 +304,9 @@ footer {
 
     <div class="categories">
         <button class="category active" data-category="全部">全部工具</button>
-        <button class="category" data-category="距离">计算距离</button>
-        <button class="category" data-category="面积">计算面积</button>
-        <button class="category" data-category="长度">计算长度</button>
+        <button class="category" data-category="距离">计算距离、长度</button>
+        <button class="category" data-category="图形">图形工具</button>
+        <button class="category" data-category="占位符">占位符</button>
         <button class="category" data-category="其他">其他工具</button>
     </div>
 
@@ -355,42 +355,43 @@ const tools = [
 
     {
         name: "平面两点距离",
-        icon: "∑",
+        icon: "🧮",
         category: "距离",
         description: "计算平面上两点距离",
         url: "distance2.html"
     },
 
     {
-        name: "占位符",
+        name: "空间两点距离",
         icon: "🧮",
-        category: "其他",
-        description: "快速进行常用数学公式计算。",
-        url: "#"
+        category: "距离",
+        description: "计算空间里两点距离",
+        url: "distance3.html"
     },
 
     {
-        name: "占位符",
+        name: "平面点线距离",
         icon: "⚛️",
-        category: "其他",
-        description: "常用物理公式与物理量计算。",
-        url: "#"
+        category: "距离",
+        description: "计算平面点到直线距离",
+        url: "linedistance2.html"
     },
 
     {
-        name: "占位符",
-        icon: "🧪",
-        category: "其他",
-        description: "辅助完成常见化学计算。",
-        url: "#"
-    },
-
-    {
-        name: "占位符",
+        name: "四面体工具",
         icon: "🔄",
-        category: "其他",
-        description: "常用物理单位之间的换算。",
-        url: "#"
+        category: "图形",
+        description: "计算四面体体积、外接球球心、半径，内切球球心、半径",
+        url: "tetrahedron.html"
+    },
+    
+
+    {
+        name: "三角形工具",
+        icon: "🔄",
+        category: "图形",
+        description: "计算三角形面积、外心、内心",
+        url: "triangle.html"
     }
 
 ];
