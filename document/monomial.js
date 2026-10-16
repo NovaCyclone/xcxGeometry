@@ -243,18 +243,26 @@ class Monomial {
   }
 
   negateValue(v) {
-    // 【新增】多项式根式：只翻系数，保留 polyRadicand
+    // 多项式根式：只翻系数，保留 polyRadicand
     if (this.isPolyRadical(v)) {
       return { ...v, coef: -v.coef };
     }
+
     if (this.isPoly(v)) {
       return {
         terms: v.terms.map(t => ({
-          coef: -t.coef, radicand: t.radicand, index: t.index, den: t.den
+          ...t,
+          coef: -t.coef
         }))
       };
     }
-    return { coef: -v.coef, radicand: v.radicand, index: v.index, den: v.den };
+
+    return {
+      coef: -v.coef,
+      radicand: v.radicand,
+      index: v.index,
+      den: v.den
+    };
   }
 
   // ==================== 求值 ====================
@@ -646,7 +654,7 @@ class Monomial {
       const body = (k === 2) ? `sqrt(${inner})` : `root(${k},${inner})`;
       if (v.coef === 1 && v.den === 1) return body;
       if (v.coef === -1 && v.den === 1) return `-${body}`;
-      return `d(${v.coef * (v.den < 0 ? -1 : 1)})*(${body})`;
+      return `d(${v.coef},${v.den || 1})*(${body})`;
     }
 
     if (this.isPoly(v)) {
