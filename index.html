@@ -306,7 +306,7 @@ footer {
         <button class="category active" data-category="全部">全部工具</button>
         <button class="category" data-category="距离">计算距离、长度</button>
         <button class="category" data-category="图形">图形工具</button>
-        <button class="category" data-category="占位符">占位符</button>
+        <button class="category" data-category="圆锥曲线">圆锥曲线</button>
         <button class="category" data-category="其他">其他工具</button>
     </div>
 
@@ -354,6 +354,14 @@ const tools = [
     },
 
     {
+        name: "多项式求导",
+        icon: "📈",
+        category: "其他",
+        description: "对含参多项式求导，或对指定参数求偏导，支持幂、根式与分式",
+        url: "derivative.html"
+    },
+
+    {
         name: "平面两点距离",
         icon: "🧮",
         category: "距离",
@@ -375,6 +383,30 @@ const tools = [
         category: "距离",
         description: "计算平面点到直线距离",
         url: "linedistance2.html"
+    },
+
+    {
+        name: "椭圆与直线交点",
+        icon: "🥚",
+        category: "圆锥曲线",
+        description: "计算椭圆（长短轴与坐标轴重合）与直线的两个交点，结果精确输出",
+        url: "ellipseline.html"
+    },
+
+    {
+        name: "抛物线与直线交点",
+        icon: "🥚",
+        category: "圆锥曲线",
+        description: "计算抛物线（长短轴与坐标轴重合）与直线的两个交点，结果精确输出",
+        url: "paraline.html"
+    },
+
+    {
+        name: "双曲线与直线交点",
+        icon: "🥚",
+        category: "圆锥曲线",
+        description: "计算双曲线（长短轴与坐标轴重合）与直线的两个交点，结果精确输出",
+        url: "hyperline.html"
     },
 
     {
