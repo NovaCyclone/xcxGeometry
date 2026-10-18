@@ -76,6 +76,19 @@
   grid-column: 2;
 }
 
+/* 数字 + 参数（a、b、h）并排：五个计算器页面共用 */
+.number-param-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+}
+
+/* 参数区：a、b、h 三个按键 */
+.param-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 /* 运算符 */
 .operator-grid {
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -143,11 +156,31 @@
   font-size: 15px;
 }
 
+/* 参数按键（a、b、h）：放在通用 .keypad .btn 之后，
+   否则同优先级下会被通用按键的背景色盖掉 */
+.param-grid .btn {
+  min-width: 54px;
+  background: #e8f6ee;
+  color: #1d7a4b;
+  border-color: #d2ebdd;
+  font-family: Georgia, "Times New Roman", serif;
+  font-style: italic;
+  font-size: 21px;
+}
+
+.param-grid .btn:hover {
+  background: #d6efe1;
+}
+
 /* ==================== 手机适配 ==================== */
 
 @media (max-width: 500px) {
   .keypad {
     gap: 16px;
+  }
+
+  .number-param-row {
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .key-grid {
@@ -163,6 +196,12 @@
   .edit-grid .btn {
     font-size: 15px;
   }
+
+  /* 参数键保持自己的字号（不要被上面的 .keypad .btn 覆盖） */
+  .param-grid .btn {
+    font-size: 21px;
+  }
+
   .control-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
